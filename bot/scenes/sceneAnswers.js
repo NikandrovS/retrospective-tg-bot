@@ -9,7 +9,12 @@ showSceneAnswers.enter(async (ctx) => {
   const [_, room, scene, currentMessage] = ctx.callbackQuery.data.split(":");
   const offset = +currentMessage || 0;
 
-  const message = await knex("messages").where({ room_id: room, scene_id: scene }).offset(offset).first();
+  const message = await knex("messages")
+    .select("messages.*", "scenes.icon")
+    .leftJoin("scenes", "scenes.id", "scene_id")
+    .where({ room_id: room, scene_id: scene })
+    .offset(offset)
+    .first();
 
   if (!message) return ctx.reply("Все сообщения прочитаны");
 
@@ -19,12 +24,12 @@ showSceneAnswers.enter(async (ctx) => {
 
   await sendMessages(
     users.reduce((acc, u) => (u.role === "guest" ? [...acc, u.user_id] : acc), []),
-    message.text
+    `${message.icon} ${message.text}`
   );
 
   await sendMessagesWithKeyboard(
     users.reduce((acc, u) => (u.role === "owner" ? [...acc, u.user_id] : acc), []),
-    message.text,
+    `${message.icon} ${message.text}`,
     [[{ text: "Дальше »", callback_data: `showSceneAnswers:${room}:${scene}:${offset + 1}` }]]
   );
 

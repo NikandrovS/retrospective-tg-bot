@@ -31,13 +31,13 @@ class Timeout {
 
     await sendMessages(
       users.map((u) => u.user_id),
-      sceneInfo.description + "\nТаймер: " + timerText(timer)
+      sceneInfo.description + "\n⏳ Таймер: " + timerText(timer)
     );
 
     this.activeTimers[room] = setTimeout(async () => {
       await sendMessages(
         users.map((u) => u.user_id),
-        "Остается 2 минуты ⏳"
+        "⏳ Остается 2 минуты"
       );
 
       this.activeTimers[room] = setTimeout(async () => {
@@ -46,12 +46,12 @@ class Timeout {
 
           await sendMessages(
             users.reduce((acc, u) => (u.role === "guest" ? [...acc, u.user_id] : acc), []),
-            "Время вышло, смотрим ответы"
+            "⌛️ Время вышло, смотрим ответы"
           );
 
           await sendMessagesWithKeyboard(
             users.reduce((acc, u) => (u.role === "owner" ? [...acc, u.user_id] : acc), []),
-            "Время вышло, смотрим ответы",
+            "⌛️ Время вышло, смотрим ответы",
             [[{ text: "Смотреть", callback_data: `showSceneAnswers:${room}:${scene}` }]]
           );
         } catch (error) {

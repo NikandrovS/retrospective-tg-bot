@@ -13,5 +13,5 @@ export default async (ctx) => {
 
   await knex("messages").insert({ room_id: room.id, scene_id: room.scene, text: ctx.update.message.text });
 
-  return await ctx.reply("Сообщение принято");
+  return await ctx.reply("📥 Сообщение принято");
 };
