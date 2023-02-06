@@ -17,8 +17,6 @@ export default async (ctx, user) => {
 
   await ctx.reply("Вы вышли из комнаты");
 
-  console.log("🚀 ~ currentRoom.role", currentRoom.role);
-
   if (currentRoom.role === "owner") {
     await knex("rooms").where({ id: currentRoom.room_id }).del();
     await sendMessages(users, "Ваша комната распущена");
