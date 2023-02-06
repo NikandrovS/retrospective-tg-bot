@@ -1,6 +1,6 @@
 import { Markup } from "telegraf";
 
-export default (members, isOwner) => {
+export default (members, isOwner, isInProgress) => {
   const membersArr = members
     .sort((a, b) => a - b)
     .map((m) => (m === "username" ? Markup.button.callback("👤 User", "_") : Markup.button.url("👤 " + m, "https://t.me/" + m)));
@@ -14,7 +14,10 @@ export default (members, isOwner) => {
     formedArray.push(chunk);
   }
 
-  if (isOwner) formedArray.push([Markup.button.callback("Запуск сцены 🚩", "initScene")]);
+  if (isOwner) {
+    if (isInProgress) formedArray.push([Markup.button.callback("Остановка сцены 🙅🏻‍♂️", "stopScene")]);
+    else formedArray.push([Markup.button.callback("Запуск сцены 🚩", "initScene")]);
+  }
   if (isOwner) formedArray.push([Markup.button.callback("Завершить ретро 🏁", "finishEvent")]);
 
   formedArray.push([Markup.button.callback("Покинуть комнату " + (isOwner ? "🏴‍☠️" : "🏳️"), "leave")]);

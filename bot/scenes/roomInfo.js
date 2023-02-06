@@ -41,7 +41,8 @@ roomInfo.enter(async (ctx) => {
     }`,
     roomKeyboard(
       roomInfo.map((u) => u.username),
-      ctx.scene.state.isOwner
+      ctx.scene.state.isOwner,
+      roomInfo[0].scene_expiration,
     )
   );
   ctx.scene.state.welcomeMessage = message_id;
@@ -78,6 +79,25 @@ roomInfo.action(/^timer:.*/, async (ctx) => {
   sceneTimeout.setTimeout(ctx.scene.state.roomId, ctx.scene.state.choosenScene, minutes);
 
   ctx.scene.leave();
+});
+
+roomInfo.action("stopScene", async (ctx) => {
+  await knex("rooms").where({ id: ctx.scene.state.roomId }).update({ scene: null, scene_expiration: null });
+
+  const roomInfo = await knex({ m: "members" })
+    .select("m.*", "r.key")
+    .leftJoin({ r: "rooms" }, "r.id", "m.room_id")
+    .where({ room_id: ctx.scene.state.roomId });
+
+  sceneTimeout.removeTimeout(ctx.scene.state.roomId);
+
+  ctx.editMessageText(
+    `Текущая комната: ${roomInfo[0].key}\nУчастников: ${roomInfo.length}`,
+    roomKeyboard(
+      roomInfo.map((u) => u.username),
+      ctx.scene.state.isOwner
+    )
+  );
 });
 
 roomInfo.action("initScene", async (ctx) => {
