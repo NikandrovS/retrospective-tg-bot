@@ -13,7 +13,7 @@ const timerText = (timer) => {
   }
 };
 
-const timeoutAlert = 1000 * 20 * 2;
+const timeoutAlert = 1000 * 60 * 2;
 
 class Timeout {
   constructor() {
@@ -58,7 +58,7 @@ class Timeout {
           console.log(error.message || error);
         }
       }, timeoutAlert);
-    }, 1000 * 20 * timer - timeoutAlert);
+    }, 1000 * 60 * timer - timeoutAlert);
   }
 
   removeTimeout(room) {
